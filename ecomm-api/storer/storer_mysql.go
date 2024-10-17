@@ -31,3 +31,23 @@ func (ms *MySQLStorer) CreateProduct(ctx context.Context, p *Product) (*Product,
 
 	return p, nil
 }
+
+func (ms *MySQLStorer) GetProduct(ctx context.Context, id int64) (*Product, error) {
+	var p Product
+	err := ms.db.GetContext(ctx, &p, "SELECT * FROM products WHERE id=? ", id)
+	if err != nil {
+		return nil, fmt.Errorf("error getting product: %w", err)
+	}
+
+	return &p, nil
+}
+
+func (ms *MySQLStorer) ListProducts(ctx context.Context) ([]*Product, error) {
+	var products []*Product
+	err := ms.db.SelectContext(ctx, &products, "SELECT * FROM products")
+	if err != nil {
+		return nil, fmt.Errorf("error listing products: %w", err)
+	}
+
+	return products, nil
+}
